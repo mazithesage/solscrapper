@@ -13,6 +13,7 @@ import re
 import random
 from datetime import datetime
 import os
+import argparse
 
 class TransactionScraper:
     def __init__(self, headless: bool = True):
@@ -356,13 +357,21 @@ class TransactionScraper:
             print(f"Error during cleanup: {e}")
 
 def main():
+    # Set up command line argument parsing
+    parser = argparse.ArgumentParser(description='Scrape Solana wallet addresses from Solscan')
+    parser.add_argument('-n', '--num_addresses', type=int, default=1000,
+                        help='Number of addresses to scrape (0 for unlimited)')
+    parser.add_argument('--headless', action='store_true',
+                        help='Run in headless mode (no browser window)')
+    args = parser.parse_args()
+    
     scraper = None
     try:
-        # Set target_addresses to 0 for unlimited scraping
-        target_addresses = 1000  # Change this value to scrape more addresses
+        print(f"Starting scraper to collect {args.num_addresses if args.num_addresses > 0 else 'unlimited'} addresses")
+        print(f"Running in {'headless' if args.headless else 'visible'} mode")
         
-        scraper = TransactionScraper(headless=False)  # Set to True to run in headless mode
-        addresses = scraper.scrape_transactions(target_addresses=target_addresses)
+        scraper = TransactionScraper(headless=args.headless)
+        addresses = scraper.scrape_transactions(target_addresses=args.num_addresses)
         scraper.save_addresses()
         print(f"Scraping completed. Total unique addresses found: {len(addresses)}")
     except Exception as e:

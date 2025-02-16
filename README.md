@@ -39,16 +39,34 @@ This will create a CSV file with the scraped wallet data, including:
 
 ### Scraping Transaction Page (Web-based)
 
-To collect wallet addresses from Solscan's transaction page:
+To collect wallet addresses from Solscan's transaction page, use the transaction scraper with the following options:
 
 ```bash
+# Default usage (scrapes 1000 addresses)
 python transaction_scraper.py
+
+# Scrape a specific number of addresses (e.g., 5000)
+python transaction_scraper.py -n 5000
+
+# Scrape unlimited addresses
+python transaction_scraper.py -n 0
+
+# Run in headless mode (no browser window)
+python transaction_scraper.py --headless
+
+# Show all available options
+python transaction_scraper.py --help
 ```
 
-This will:
-1. Scrape multiple pages of transactions from solscan.io/txs
-2. Extract wallet addresses from the transactions
-3. Save unique addresses to `scraped_addresses.csv`
+Command-line options:
+- `-n, --num_addresses`: Number of addresses to scrape (default: 1000, use 0 for unlimited)
+- `--headless`: Run in headless mode without showing the browser window
+
+The script will:
+1. Scrape transactions from solscan.io/txs until the target number of addresses is reached
+2. Extract unique wallet addresses from the transactions
+3. Save progress periodically to avoid data loss
+4. Save final results to `scraped_addresses.csv`
 
 ## Features
 
