@@ -14,8 +14,44 @@ import random
 from datetime import datetime
 import os
 import argparse
+import base58
+from typing import Optional
 
 class TransactionScraper:
+    @staticmethod
+    def is_valid_solana_address(address: str) -> bool:
+        """Validate if a string is a valid Solana wallet address.
+        
+        Args:
+            address: The string to validate
+            
+        Returns:
+            bool: True if the address is valid, False otherwise
+        """
+        try:
+            # Check basic string properties
+            if not address or not isinstance(address, str):
+                return False
+                
+            # Solana addresses are 32-44 characters long
+            if not (32 <= len(address) <= 44):
+                return False
+                
+            # Must only contain base58 characters
+            if not all(c in '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz' for c in address):
+                return False
+                
+            # Try to decode the base58 string
+            decoded = base58.b58decode(address)
+            
+            # Solana addresses are 32 bytes after decoding
+            if len(decoded) != 32:
+                return False
+                
+            return True
+        except Exception:
+            return False
+            
     def __init__(self, headless: bool = True):
         """Initialize the scraper
         
